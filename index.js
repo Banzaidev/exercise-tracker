@@ -14,7 +14,17 @@ const usersSchema = new mongoose.Schema({
   },
 })
 
+const exercisesSchema = new mongoose.Schema({
+  username: String,
+  description: String,
+  duration: Number,
+  date: Date,
+  _id: Number
+})
+
+
 const Users = mongoose.model('users',usersSchema)
+const Esercises = mongoose.model('exercises',usersSchema)
 
 app.use(cors())
 app.use(express.static('public'))
@@ -43,7 +53,15 @@ app.route('/api/users')
   }
 
 })
-
+.get(async (req,res)=>{
+  try{
+    const users = await Users.find()
+    res.send(users)
+  }
+  catch{
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
 
 
 const listener = app.listen(process.env.PORT || 3000, () => {
