@@ -50,7 +50,7 @@ app.route('/api/users')
     
   }
   catch{
-    res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 
 })
@@ -60,9 +60,10 @@ app.route('/api/users')
     res.send(users)
   }
   catch{
-    res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 })
+
 app.use('/api/users/:_id/exercises',bodyParser.urlencoded())
 
 app.post('/api/users/:_id/exercises', async (req,res)=>{
