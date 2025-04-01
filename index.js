@@ -15,11 +15,22 @@ const usersSchema = new mongoose.Schema({
   },
 })
 
+const Users = mongoose.model('users',usersSchema)
+
 app.use(cors())
 app.use(express.static('public'))
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
+
+app.use('/api/users',bodyParser.urlencoded())
+
+app.route('/api/users')
+.post(async (req,res)=>{
+  
+})
+
 
 
 const listener = app.listen(process.env.PORT || 3000, () => {
