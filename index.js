@@ -28,7 +28,20 @@ app.use('/api/users',bodyParser.urlencoded())
 
 app.route('/api/users')
 .post(async (req,res)=>{
-  
+  try{
+    const usernameParam = req.body.username
+    const user = await Users.findOne({username: usernameParam})
+    if(!user){
+      await Users.create({
+        username: usernameParam
+      })
+    }
+    res.json({username: usernameParam, _id: user._id})
+  }
+  catch{
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+
 })
 
 
