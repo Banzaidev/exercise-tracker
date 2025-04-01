@@ -10,8 +10,7 @@ mongoose.connect(process.env.DB_URI)
 
 const usersSchema = new mongoose.Schema({
   username: {
-    type: String,
-    unique: true
+    type: String
   },
 })
 
@@ -30,13 +29,14 @@ app.route('/api/users')
 .post(async (req,res)=>{
   try{
     const usernameParam = req.body.username
-    const user = await Users.findOne({username: usernameParam})
-    if(!user){
+    if(!(await Users.findOne({username: usernameParam}))){
       await Users.create({
         username: usernameParam
       })
     }
+    const user = await Users.findOne({username: usernameParam})
     res.json({username: usernameParam, _id: user._id})
+    
   }
   catch{
     res.status(500).json({ error: 'Internal Server Error' });
