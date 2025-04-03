@@ -23,9 +23,22 @@ const exercisesSchema = new mongoose.Schema({
   
 })
 
+const logsSchema = new mongoose.Schema({
+  username: {type: String, required: true},
+  count: {type: Number, required: true},
+  user_id: {type: mongoose.Types.ObjectId, required: true},
+  log: [{
+    description: String,
+    duration: Number,
+    date: Date
+  }]
+
+})
+
 
 const Users = mongoose.model('users',usersSchema)
 const Esercises = mongoose.model('exercises',exercisesSchema)
+const Logs = mongoose.model('logs', logsSchema)
 
 app.use(cors())
 app.use(express.static('public'))
@@ -94,6 +107,30 @@ app.post('/api/users/:_id/exercises', async (req,res)=>{
     
   })
   res.json({ _id: id, username: user.username, date: new Date(date).toDateString(), duration, description})
+  
+})
+
+app.get('/api/users/:_id/logs', async (req,res)=>{
+  const user_id = req.params._id
+  if(!user_id){
+    return res.status(400).json({error: 'id is required'})
+  }
+  const username = await Users.findById(user_id)
+  if(!username){
+    return res.status(404).json({error: 'User not found '})
+  }
+  
+  let exerciseAr = []
+  const exercises = await Esercises.find({user_id: user_id})
+  
+  exercises.forEach((exercise) => {
+    exerciseAr.push({date: exercise.date.toDateString(),description: exercise.description, duration: exercise.duration})
+    
+  })
+
+  const count = exercises.length
+  res.json({username, count, _id: user_id, log: exerciseAr})
+
   
 })
 
