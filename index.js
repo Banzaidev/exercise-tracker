@@ -23,22 +23,8 @@ const exercisesSchema = new mongoose.Schema({
   
 })
 
-const logsSchema = new mongoose.Schema({
-  username: {type: String, required: true},
-  count: {type: Number, required: true},
-  user_id: {type: mongoose.Types.ObjectId, required: true},
-  log: [{
-    description: String,
-    duration: Number,
-    date: Date
-  }]
-
-})
-
-
 const Users = mongoose.model('users',usersSchema)
 const Esercises = mongoose.model('exercises',exercisesSchema)
-const Logs = mongoose.model('logs', logsSchema)
 
 app.use(cors())
 app.use(express.static('public'))
@@ -110,27 +96,55 @@ app.post('/api/users/:_id/exercises', async (req,res)=>{
   
 })
 
+/* The problem with the previous commit was that applying a limit on the exercises array before filtering by dates (from/to)
+resulted in an undefined order of elements. Consequently, the date filter could return an empty array even if there were
+exercises within the desired date range. By defining the query with the date filters first and then applying the limit,
+the expected result is achieved. */
+
+
 app.get('/api/users/:_id/logs', async (req,res)=>{
-  const user_id = req.params._id
-  if(!user_id){
-    return res.status(400).json({error: 'id is required'})
+
+  const from = req.query.from 
+  const to = req.query.to
+  const limit = req.query.limit
+  const id = req.params._id
+
+  let exercisesAr = [];
+  let exercises;
+
+  const user = await Users.findById(id)
+
+  if(!user){
+    return res.status(404).json({error: 'User not found'})
   }
-  const username = await Users.findById(user_id)
-  if(!username){
-    return res.status(404).json({error: 'User not found '})
+
+  const query = {user_id: id}
+
+  if(from || to){
+    if(isNaN(new Date(from)) || isNaN(new Date(to))){
+      return res.status(400).json({error: 'Invalid from or to paramater'})
+    }
+    const fromDate = new Date(from).toISOString()
+    const toDate = new Date(to).toISOString()
+    query.date = {}
+    query.date.$gte = fromDate //grater than 
+    query.date.$lte = toDate //less than
   }
-  
-  let exerciseAr = []
-  const exercises = await Esercises.find({user_id: user_id})
-  
-  exercises.forEach((exercise) => {
-    exerciseAr.push({date: exercise.date.toDateString(),description: exercise.description, duration: exercise.duration})
-    
+
+  if(limit){
+    if(isNaN(parseInt(limit))){
+      return res.status(400).json({error: 'Invalid limit parameter'})
+    }
+    exercises = await Esercises.find(query).limit(limit)
+  }else{
+    exercises = await Esercises.find(query)
+  }
+
+  exercises.forEach(exercise => {
+    exercisesAr.push({description: exercise.description, duration: exercise.duration, date: new Date(exercise.date).toDateString() })
   })
-
-  const count = exercises.length
-  res.json({username, count, _id: user_id, log: exerciseAr})
-
+  
+  res.json({username: user.username, count: exercisesAr.length, _id: user._id, log: exercisesAr })
   
 })
 
