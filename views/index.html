@@ -2,34 +2,102 @@
 <html>
   <head>
     <title>Exercise Tracker</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
-    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
   </head>
 
   <body>
-    <div class="container">
-      <h1>Exercise tracker</h1>
-      <form action="/api/users" method="post">
-        <h2>Create a New User</h2>
-        <p><code>POST /api/users</code></p>
-        <input id="uname" type="text" name="username" placeholder="username" />
-        <input type="submit" value="Submit" />
-      </form>
-      <form action="/api/users/:_id/exercises" id="exercise-form" method="post">
-        <h2>Add exercises</h2>
-        <p><code>POST /api/users/:_id/exercises</code></p>
-        <input id="uid" type="text" name=":_id" placeholder=":_id" />
-        <input id="desc" type="text" name="description" placeholder="description*" />
-        <input id="dur" type="text" name="duration" placeholder="duration* (mins.)" />
-        <input id="date" type="text" name="date" placeholder="date (yyyy-mm-dd)" />
-        <input type="submit" value="Submit" />
-      </form>
-      <p>
-        <strong>GET user's exercise log: </strong>
-        <code>GET /api/users/:_id/logs?[from][&amp;to][&amp;limit]</code>
-      </p>
-      <p><strong>[ ]</strong> = optional</p>
-      <p><strong>from, to</strong> = dates (yyyy-mm-dd); <strong>limit</strong> = number</p>
+    <div>
+      <h1 class="text-center mb-3">Exercise tracker</h1>
+      <div id="api-route" class="carousel carousel-dark slide container bg-secondary-subtle rounded">
+        <div class="row">
+          <div class="col p-3">
+            <button class="carousel-control-prev " type="button" data-bs-target="#api-route" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+          </div>
+          <div class="col-10 mt-4 mb-4 ">
+            <div class="carousel-inner">
+              <div class="carousel-item active ">
+                <form class="container w-75 text-start" action="/api/users" method="post">
+                  <div class="row">
+                    <h2 class="display-6">Create a New User</h2>
+                  </div>
+                  <div class="row">
+                    <p><code>POST /api/users</code></p>
+                  </div>
+                  <div class="row form-floating">
+                    <input id="uname" type="text" class="form-control"  name="username" placeholder="username" required />
+                    <label for="uname">Username</label>
+                  </div>
+                  <div class="row mt-4 w-25 ">
+                    <input class="btn btn-primary " type="submit" value="Submit" />
+                  </div>
+                </form>
+              </div>
+              <div class="carousel-item">
+                <form class="container w-75" action="/api/users/:_id/exercises" id="exercise-form" method="post">
+                  <div class="row">
+                    <h2 class="display-6">Add exercises</h2>
+                  </div>
+                  <div class="row">
+                    <p><code>POST /api/users/:_id/exercises</code></p>
+                  </div>
+                  <div class="row form-floating mb-3">
+                    <input class="form-control" id="uid" type="text" name=":_id" placeholder=":_id" required />
+                    <label for="uid">_id</label>
+                  </div>
+                  <div class="row form-floating mb-3">
+                    <input class="form-control" id="desc" type="text" name="description" placeholder="description*" required />
+                    <label for="desc">Description</label>
+                  </div>
+                  <div class="row form-floating mb-3">
+                    <input class="form-control" id="dur" type="number" name="duration" min="0" max="60" placeholder="duration* (mins.)" required />
+                    <label for="dur">Duration</label>
+                  </div>
+                  <div class="row form-floating mb-3">
+                    <input class="form-control" id="date" type="date" name="date" placeholder="date (yyyy-mm-dd)" />
+                    <label for="date">Date(yyyy-mm-dd)</label>
+                  </div>
+                  <div class="row w-25 mt-3">
+                    <input class="btn btn-primary" type="submit" value="Submit" />
+                  </div>
+                </form>
+              </div>
+              
+            </div>
+          </div>
+          <div class="col p-3">
+            <button class="carousel-control-next" type="button" data-bs-target="#api-route" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+        <div class="row mt-5">
+          <div class="col text-center">
+            <p>
+              <strong>GET user's exercise log: </strong>
+              <code>GET /api/users/:_id/logs?[from][&amp;to][&amp;limit]</code>
+            </p>
+            <p><strong>[ ]</strong> = optional</p>
+            <p><strong>from, to</strong> = dates (yyyy-mm-dd); <strong>limit</strong> = number</p>
+          </div>
+
+        </div>
+        <div class="row mt-5">
+          <div class="col">
+            <div class="carousel-indicators">
+              <button type="button" data-bs-target="#api-route" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+              <button type="button" data-bs-target="#api-route" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            </div>
+          </div>
+
+        </div>
+
+
+      </div>
     </div>
     <script>
       const exerciseForm = document.getElementById("exercise-form");
